@@ -8,3 +8,6 @@
 
 1. information taking from remote hosts using
    learned protocols
+
+
+ChatGPT fucks russia :(

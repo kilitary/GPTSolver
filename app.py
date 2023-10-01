@@ -165,6 +165,15 @@ App.layout = dbc.Container(
                 'font-weight': 'bold'
             },
         ),
+        html.Div(
+            id='store-area',
+            style={
+                'width'   : '100%',
+                'height'  : '10%',
+                'overflow': 'auto',
+                'border:' : '1px dashed orange'
+            }
+        ),
         dcc.Store(id="store-conversation", data=""),
         conversation,
         dbc.Row([
@@ -217,12 +226,14 @@ def update_prompt(issue):
 
 
 @App.callback(
-    Output("display-conversation", "children"), [Input("store-conversation", "data")]
+    [Output('store-area', 'children'), Output("display-conversation", "children")],
+    [Input("store-conversation", "data")]
 )
 def update_display(chat_history):
     if chat_history is None:
         return ''
-    return [
+    print(f'update_disp: {chat_history}')
+    return str(len(chat_history)) + ' ' + chat_history, [
         textbox(" " + x, box="user") if i % 2 == 0 else textbox(" " + x, box="AI")
         for i, x in enumerate(chat_history.split("<split>")[:-1])
     ]
@@ -252,7 +263,7 @@ def run_chatbot(n_clicks, n_submit, user_input, chat_history):
     print(f'user_input: {user_input}')
     print(f'description: {description}')
 
-    name = "assistant"
+    name = "coding assistant"
     prompt = dedent(
         f"""
     {description}
@@ -269,14 +280,15 @@ def run_chatbot(n_clicks, n_submit, user_input, chat_history):
 
     model_input = prompt + chat_history.replace("<split>", "\n")
     print(f'model_input len={len(model_input)}')
+    print(f'model_input !{model_input}!')
 
     try:
         response = openai.Completion.create(
             engine=current_engine,
             prompt=model_input,
-            max_tokens=1024,
+            max_tokens=1850,
             stop=["You: "],
-            temperature=0.9,
+            temperature=0.7,
         )
         model_output = response.choices[0].text.strip()
 

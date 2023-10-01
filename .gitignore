@@ -33,3 +33,6 @@ packages/
 /venv/
 .idea
 info.txt
+/__pycache__/inf.cpython-37.pyc
+/venv/
+/.idea/

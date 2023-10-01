@@ -24,15 +24,17 @@ def AppHeader(name, app):
 def textbox(text, box="AI", name="Operator"):
     text = text.replace(f"{name}:", "AI: ").replace("You:", f"{name}: ")
     style = {
-        "max-width"    : "40%",
+        "max-width"    : "90%",
         "width"        : "max-content",
         "padding"      : "5px 10px",
         "margin-bottom": 20,
     }
 
     if box == "user":
-        style["margin-left"] = "10px"
+        style["margin-left"] = "0"
         style["margin-right"] = 0
+        style['word-break'] = 'break-all'
+        style['white-space'] = 'pre-wrap'
 
         thumbnail = html.Img(
             src=App.get_asset_url("User.png"),
@@ -49,7 +51,9 @@ def textbox(text, box="AI", name="Operator"):
 
     elif box == "AI":
         style["margin-left"] = 0
-        style["margin-right"] = "10px"
+        style["margin-right"] = "0"
+        style['word-break'] = 'break-all'
+        style['white-space'] = 'pre-wrap'
 
         thumbnail = html.Img(
             src=App.get_asset_url("Database.png"),
@@ -77,7 +81,7 @@ conversation = html.Div(
     style={
         "overflow-y"    : "auto",
         "display"       : "flex",
-        "height"        : "calc(90vh - 158px)",
+        "height"        : "calc(92vh - 158px)",
         "flex-direction": "column-reverse",
     },
 )
@@ -92,7 +96,7 @@ controls = dbc.InputGroup(
 prompt_items = [{'value': str(i), 'label': tokens_all[i]} for i in range(0, len(tokens_all))]
 issues = dbc.Select(
     style={
-        'fontSize'  : '8px',
+        'fontSize'  : '12px',
         'fontFamily': 'lucida console'
     },
     options=prompt_items,
@@ -106,7 +110,7 @@ engines = [
 
 engines_div = dbc.Select(
     style={
-        'fontSize'  : '8px',
+        'fontSize'  : '12px',
         'fontFamily': 'lucida console'
     },
     options=[{'value': str(i), 'label': engines[i]} for i in range(0, len(engines))],
@@ -126,15 +130,14 @@ prompts = html.Div([
         },
         id='selected-issue',
         children=[]
-    )],
-    id="temp1"
+    )]
 )
 
 # Authentication
 openai.api_key = os.getenv('OPENAI_API_KEY')
 
 # Define app LUX/LUMEN/JOURNAL/PULSE
-App = dash.Dash(__name__, external_stylesheets=[dbc.themes.LUX], compress=False,
+App = dash.Dash(__name__, external_stylesheets=[dbc.themes.LUMEN], compress=False,
                 meta_tags=[{'name': 'description', 'content': 'issues chat'}])
 
 prompt = "prompt"
@@ -288,7 +291,7 @@ def run_chatbot(n_clicks, n_submit, user_input, chat_history):
             prompt=model_input,
             max_tokens=1850,
             stop=["You: "],
-            temperature=0.7,
+            temperature=0.2,
         )
         model_output = response.choices[0].text.strip()
 

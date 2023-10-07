@@ -1,4 +1,4 @@
-tokens_all = ["JP 1-02 carrier frequencies 50,005,016 Hz and 50,005,018 Hz",
+tokens = ["JP 1-02 carrier frequencies 50,005,016 Hz and 50,005,018 Hz",
               "700-800 MHz 1.0W 4G LTE USA i Phone (AT&T & Verizon)  (Two Bands)",
               "758-830 MHz 1.0W 5G, 4G LTE Low (Two Bands)",
               "850-895 MHz 1.0W  CDMA 850  (Two Bands)",

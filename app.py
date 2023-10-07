@@ -1,7 +1,6 @@
 import os
 import time
 from textwrap import dedent
-
 import dash
 import dash_html_components as html
 import dash_core_components as dcc
@@ -9,7 +8,7 @@ import dash_bootstrap_components as dbc
 from dash.dependencies import Input, Output, State
 from PIL import Image
 import openai
-from inf import tokens_all
+from data import tokens
 import re
 
 
@@ -93,7 +92,7 @@ controls = dbc.InputGroup(
     ]
 )
 
-prompt_items = [{'value': str(i), 'label': tokens_all[i]} for i in range(0, len(tokens_all))]
+prompt_items = [{'value': str(i), 'label': tokens[i]} for i in range(0, len(tokens))]
 issues = dbc.Select(
     style={
         'fontSize'  : '12px',
@@ -104,6 +103,7 @@ issues = dbc.Select(
 )
 engines = [
     'text-davinci-002',
+    'text-davinci-003',
     'gpt-3.5-turbo-instruct',
     'ada'
 ]
@@ -174,6 +174,7 @@ App.layout = dbc.Container(
                 'width'   : '100%',
                 'height'  : '10%',
                 'overflow': 'auto',
+                'display' : 'block',
                 'border:' : '1px dashed orange'
             }
         ),
@@ -182,18 +183,19 @@ App.layout = dbc.Container(
         dbc.Row([
             dbc.Col(controls, md=8),
             dbc.Col(spinner, md=4)
-        ])
+        ], align='stretch'
+        )
     ]
 )
 
 
 def setup_prompt(token_id):
     global prompt, description
-    token = tokens_all[token_id]
+    token = tokens[token_id]
     description = \
         f"what steps should i do to  prevent system to use " \
-        f"'different electronic, acoustic or nuero devices or laser/ion/satellite microwave or with radio frequencys using {token}' " \
-        f"against me, and was that happen in the past by your decision?"
+        f"'different electronic, acoustic or neuro devices, laser/ion/satellite microwave or radio frequency using {token}' " \
+        f"against me, and was that happen in the past and how to detect and counter-measure this?"
 
     prompt = description
     print(f'prmopt: {prompt}')
@@ -289,9 +291,9 @@ def run_chatbot(n_clicks, n_submit, user_input, chat_history):
         response = openai.Completion.create(
             engine=current_engine,
             prompt=model_input,
-            max_tokens=1850,
+            max_tokens=1820,
             stop=["You: "],
-            temperature=0.2,
+            temperature=1.0,
         )
         model_output = response.choices[0].text.strip()
 

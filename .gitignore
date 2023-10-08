@@ -36,16 +36,4 @@ info.txt
 /__pycache__/inf.cpython-37.pyc
 /venv/
 /.idea/
-!/data/
-/data/00000000-rss.htm%21contenttype%3Dxml.html
-/data/2e51f79a-perechen_arhive.doc
-/data/4bf08249-FZ_N117-FZ_20082004.docx
-/data/7e2c3b5d-all.css
-/data/37e193cc-PP_N655_07112005.docx
-/data/50a0224d-ie_fix.css
-/data/58e55e71-FZ_90-FZ.pdf
-/data/66ceef35-leadership.htm
-/data/b38fa747-PP_N89_21022005.docx
-/data/b830b4df-bootstrap.min.css
-/data/d16b1e4b-fsb.htm
-/data/d16b1e4b-fsb.ru
+/data/

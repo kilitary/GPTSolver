@@ -13,6 +13,8 @@ import threading
 import warnings
 import binascii
 
+import urllib3.util
+
 warnings.filterwarnings("ignore", category=DeprecationWarning)  # %%
 
 # %%
@@ -66,7 +68,7 @@ class FSBAssimilator:
         print(f'parse_page: {link}')
         if link in self.done_urls:
             print(f'already: {link}')
-            print(f'[{self.done_urls}')
+            # print(f'[{self.done_urls}')
             return '', ''
         else:
             self.done_urls.append(link)
@@ -83,6 +85,11 @@ class FSBAssimilator:
         #     return downloaded_url, json_output['text']
         # else:
         try:
+            proxies = {
+                # 'socks': 'socks://kilitary.ru:41',
+                'https': 'https://kilitary.ru:255'
+            }
+
             headers = {
                 'Accept'                   : 'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
                 'Accept-Encoding'          : 'gzip, deflate',
@@ -91,13 +98,13 @@ class FSBAssimilator:
                 'Connection'               : 'keep-alive',
                 'Pragma'                   : 'no-cache',
                 'Upgrade-Insecure-Requests': '1',
-                'Referer'                  : 'http://www.fsb.ru/',
+                'Referer'                  : 'http://fsb.ru/',
                 'User-Agent'               : 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36 Edg/117.0.2041.18',
 
             }
             crc = binascii.crc32(link.encode('utf-8'))
             print(f'downloading {link} (crc={crc:x}) ... ', end='')
-            r = requests.get(link, headers=headers)
+            r = requests.get(link, headers=headers, proxies=proxies)
             print(f'done: {len(r.content)} bytes')
 
             # We will only extract the text from successful requests:
@@ -143,10 +150,12 @@ class FSBAssimilator:
     def process_page(self, response):
         all_relative = re.findall('href=(\'|")(.*?)(\'|")', response.content.decode('utf-8', errors='ignore'))
         for link in all_relative:
-            if 'javascript:' in link[1]:
+            lnk = link[1] if link[1].startswith('http') else 'http://fsb.ru/' + link[1]
+            U = urllib3.util.parse_url(lnk)
+            if 'javascript:' in lnk or (U.host != 'www.fsb.ru' and U.host != 'fsb.ru' and U.host != 'fsb'):
+                print(f'skip {U.host} ({lnk})')
                 continue
-            l = 'http://' + link[1] if not link[1].startswith('http') else link[1]
-            self.parse_page(l)
+            self.parse_page(lnk)
 
 
 # def push_url(url):
